@@ -1,19 +1,35 @@
 import { Box, Typography, Container, Paper, Snackbar, Alert } from "@mui/material";
 import { useEffect, useState } from "react";
 import Todo from "../components/Todo";
+import axios from "axios";
+
+type TodoType = {
+  id: string;
+  title: string;
+  author: string;
+  date: string;
+};
 
 export default function Dashboard() {
   const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [todos, setTodos] = useState<TodoType[]>([]);
 
   useEffect(() => {
+    const fetchTodos = async () => {
+      try {
+        const res = await axios.get<TodoType[]>("http://localhost:3000/todos");
+
+        // id順に昇順ソート
+        const sorted = res.data.sort((a, b) => a.id.localeCompare(b.id));
+
+        setTodos(sorted);
+      } catch (err) {
+        console.error("❌ Failed to fetch todos", err);
+      }
+    };
+    fetchTodos();
     setOpenSnackbar(true);
   }, []);
-
-  const todos = [
-    { date: "2025-10-23", title: "Reactの型定義を確認する", author: "たくみ" },
-    { date: "2025-10-23", title: "Todo一覧の表示を実装する", author: "たかと" },
-    { date: "2025-10-25", title: "API連携の設計を考える", author: "たくみ？" },
-  ];
 
   return (
     <Container
@@ -62,9 +78,9 @@ export default function Dashboard() {
           </Box>
 
           {/* TODO一覧 */}
-          {todos.map((todo, index) => (
+          {todos.map((todo) => (
             <Todo
-              key={index}
+              key={todo.id}
               date={todo.date}
               title={todo.title}
               author={todo.author}
