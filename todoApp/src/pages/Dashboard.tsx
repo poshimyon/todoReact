@@ -7,7 +7,7 @@ type TodoType = {
   id: string;
   title: string;
   author: string;
-  date: string;
+  todoDate: string;
 };
 
 export default function Dashboard() {
@@ -30,6 +30,16 @@ export default function Dashboard() {
     fetchTodos();
     setOpenSnackbar(true);
   }, []);
+
+  const handleDelete = async (id: string) => {
+    try {
+      await axios.delete(`http://localhost:3000/todos/${id}`);
+      setTodos((prev) => prev.filter((todo) => todo.id !== id));
+    } catch (err) {
+      console.error("❌ Failed to delete todo", err);
+    }
+  };
+
 
   return (
     <Container
@@ -81,9 +91,10 @@ export default function Dashboard() {
           {todos.map((todo) => (
             <Todo
               key={todo.id}
-              date={todo.date}
+              date={todo.todoDate}
               title={todo.title}
               author={todo.author}
+              onDelete={() => handleDelete(todo.id)}
             />
           ))}
         </Box>
