@@ -1,9 +1,9 @@
 import { Box, Container, Paper } from "@mui/material";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import DashboardHeader from "../components/DashboardHeader";
-import TodoList from "../components/TodoList";
-import LoginSnackbar from "../components/LoginSnackbar";
+import DashboardHeader from "../components/atoms/DashboardHeader";
+import TodoList from "../components/molecules/TodoList";
+import LoginSnackbar from "../components/atoms/LoginSnackbar";
 
 type TodoType = {
     id: string;
