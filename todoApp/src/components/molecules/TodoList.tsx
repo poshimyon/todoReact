@@ -1,12 +1,6 @@
 import Todo from "../atoms/Todo";
 import { Box } from "@mui/material";
-
-type TodoType = {
-    id: string;
-    title: string;
-    author: string;
-    date: string;
-};
+import type { TodoType } from "../../types/todo";
 
 type Props = {
     todos: TodoType[];
