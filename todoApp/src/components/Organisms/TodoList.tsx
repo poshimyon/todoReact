@@ -1,4 +1,4 @@
-import Todo from "../atoms/Todo";
+import Todo from "../molecules/Todo";
 import { Box } from "@mui/material";
 import type { TodoType } from "../../types/todo";
 

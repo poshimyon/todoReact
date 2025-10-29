@@ -1,7 +1,7 @@
 import { Box, Container, Paper } from "@mui/material";
 import { useEffect, useState } from "react";
 import DashboardHeader from "../components/atoms/DashboardHeader";
-import TodoList from "../components/molecules/TodoList";
+import TodoList from "../components/Organisms/TodoList";
 import LoginSnackbar from "../components/atoms/LoginSnackbar";
 import useTodos from "../hooks/useTodos";
 
