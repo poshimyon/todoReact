@@ -7,7 +7,7 @@ import useTodos from "../hooks/useTodos";
 
 export default function Dashboard() {
     const [openSnackbar, setOpenSnackbar] = useState(false);
-    const { data: todos } = useTodos();
+    const { data: todos, remove: removeTodo } = useTodos();
 
     useEffect(() => {
         setOpenSnackbar(true);
@@ -38,7 +38,7 @@ export default function Dashboard() {
                     <DashboardHeader />
 
                     {/* TODO一覧 */}
-                    <TodoList todos={todos} />
+                    <TodoList todos={todos} onDelete={removeTodo} />
                 </Box>
             </Paper>
 
