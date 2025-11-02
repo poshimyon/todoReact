@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { getTodos } from "../api/todos";
+import { deleteTodo as deleteTodoApi, getTodos } from "../api/todos";
 import type { TodoType } from "../types/todo";
 
 type UseTodosResult = {
@@ -7,6 +7,7 @@ type UseTodosResult = {
     loading: boolean;
     error: Error | null;
     refetch: () => Promise<void>;
+    remove: (id: string) => Promise<void>;
 };
 
 export default function useTodos(): UseTodosResult {
@@ -29,9 +30,24 @@ export default function useTodos(): UseTodosResult {
         }
     }, []);
 
+    const remove = useCallback(
+        async (id: string) => {
+            setError(null);
+            try {
+                await deleteTodoApi(id);
+                setData((prev) => prev.filter((todo) => todo.id !== id));
+            } catch (err: unknown) {
+                const error = err instanceof Error ? err : new Error(String(err));
+                setError(error);
+                throw error;
+            }
+        },
+        []
+    );
+
     useEffect(() => {
         void fetch();
     }, [fetch]);
 
-    return { data, loading, error, refetch: fetch };
+    return { data, loading, error, refetch: fetch, remove };
 }

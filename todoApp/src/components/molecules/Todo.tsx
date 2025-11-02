@@ -3,13 +3,13 @@ import { Box, Typography, Paper } from "@mui/material";
 import DeleteButton from "../atoms/DeleteButton";
 
 type TodoProps = {
-    date: string;
+    todoDate: string;
     title: string;
     author: string;
     onDelete: () => void;
 };
 
-export default function Todo({ date, title, author, onDelete }: TodoProps) {
+export default function Todo({ todoDate, title, author, onDelete }: TodoProps) {
     return (
         <Paper
             elevation={3}
@@ -34,7 +34,7 @@ export default function Todo({ date, title, author, onDelete }: TodoProps) {
                 </Box>
 
                 <Typography variant="body2" sx={{ width: "30%" }}>
-                    {date}
+                    {todoDate}
                 </Typography>
                 <Typography
                     variant="body1"
