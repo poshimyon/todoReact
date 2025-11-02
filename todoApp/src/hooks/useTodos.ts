@@ -1,10 +1,15 @@
 import { useCallback, useEffect, useState } from "react";
 import {
+    createTodo as createTodoApi,
     deleteTodo as deleteTodoApi,
     getTodos,
     updateTodo as updateTodoApi,
 } from "../api/todos";
-import type { TodoType, TodoUpdatePayload } from "../types/todo";
+import type {
+    TodoCreatePayload,
+    TodoType,
+    TodoUpdatePayload,
+} from "../types/todo";
 
 type UseTodosResult = {
     data: TodoType[];
@@ -13,6 +18,7 @@ type UseTodosResult = {
     refetch: () => Promise<void>;
     remove: (id: string) => Promise<void>;
     edit: (id: string, payload: TodoUpdatePayload) => Promise<void>;
+    create: (payload: TodoCreatePayload) => Promise<void>;
 };
 
 export default function useTodos(): UseTodosResult {
@@ -64,9 +70,25 @@ export default function useTodos(): UseTodosResult {
         []
     );
 
+    const create = useCallback(async (payload: TodoCreatePayload) => {
+        setError(null);
+        try {
+            const created = await createTodoApi(payload);
+            setData((prev) => {
+                const next = [...prev, created];
+                next.sort((a, b) => a.id.localeCompare(b.id));
+                return next;
+            });
+        } catch (err: unknown) {
+            const error = err instanceof Error ? err : new Error(String(err));
+            setError(error);
+            throw error;
+        }
+    }, []);
+
     useEffect(() => {
         void fetch();
     }, [fetch]);
 
-    return { data, loading, error, refetch: fetch, remove, edit };
+    return { data, loading, error, refetch: fetch, remove, edit, create };
 }

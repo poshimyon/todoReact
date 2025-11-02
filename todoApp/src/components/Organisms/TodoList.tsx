@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Box } from "@mui/material";
 import Todo from "../molecules/Todo";
 import ConfirmDialog from "../molecules/ConfirmDialog";
-import EditTodoDialog from "../molecules/EditTodoDialog";
+import TodoFormDialog from "../molecules/EditTodoDialog";
 import type { TodoType, TodoUpdatePayload } from "../../types/todo";
 
 type Props = {
@@ -110,7 +110,7 @@ export default function TodoList({ todos, onDelete, onEdit }: Props) {
                 }}
             />
 
-            <EditTodoDialog
+            <TodoFormDialog
                 open={Boolean(editingTodo)}
                 initialValues={
                     editingTodo

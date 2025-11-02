@@ -5,8 +5,11 @@ export type TodoType = {
     todoDate: string;
 };
 
-export type TodoUpdatePayload = {
+export type TodoPayload = {
     title: string;
     author: string;
     todoDate: string;
 };
+
+export type TodoUpdatePayload = TodoPayload;
+export type TodoCreatePayload = TodoPayload;

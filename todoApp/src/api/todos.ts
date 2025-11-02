@@ -1,5 +1,9 @@
 import client from "./client";
-import type { TodoType, TodoUpdatePayload } from "../types/todo";
+import type {
+    TodoCreatePayload,
+    TodoType,
+    TodoUpdatePayload,
+} from "../types/todo";
 
 export async function getTodos(): Promise<TodoType[]> {
     const res = await client.get<TodoType[]>("/todos");
@@ -15,5 +19,12 @@ export async function updateTodo(
     payload: TodoUpdatePayload
 ): Promise<TodoType> {
     const res = await client.put<TodoType>(`/todos/${id}`, payload);
+    return res.data;
+}
+
+export async function createTodo(
+    payload: TodoCreatePayload
+): Promise<TodoType> {
+    const res = await client.post<TodoType>("/todos", payload);
     return res.data;
 }

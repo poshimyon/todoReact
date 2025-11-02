@@ -8,30 +8,34 @@ import {
     Stack,
     TextField,
 } from "@mui/material";
-import type { TodoUpdatePayload } from "../../types/todo";
+import type { TodoPayload } from "../../types/todo";
 
-type EditTodoDialogProps = {
+type TodoFormDialogProps = {
     open: boolean;
-    initialValues: TodoUpdatePayload | null;
+    initialValues: TodoPayload | null;
     loading?: boolean;
+    dialogTitle?: string;
+    submitLabel?: string;
     onCancel: () => void;
-    onSave: (values: TodoUpdatePayload) => void;
+    onSave: (values: TodoPayload) => void;
 };
 
-const emptyValues: TodoUpdatePayload = {
+const emptyValues: TodoPayload = {
     title: "",
     author: "",
     todoDate: "",
 };
 
-export default function EditTodoDialog({
+export default function TodoFormDialog({
     open,
     initialValues,
     loading = false,
+    dialogTitle = "TODOを編集",
+    submitLabel = "保存する",
     onCancel,
     onSave,
-}: EditTodoDialogProps) {
-    const [values, setValues] = useState<TodoUpdatePayload>(emptyValues);
+}: TodoFormDialogProps) {
+    const [values, setValues] = useState<TodoPayload>(emptyValues);
 
     const canSubmit = useMemo(() => {
         return values.title.trim().length > 0 && values.todoDate.trim().length > 0;
@@ -46,7 +50,7 @@ export default function EditTodoDialog({
     }, [open, initialValues]);
 
     const handleChange =
-        (field: keyof TodoUpdatePayload) =>
+        (field: keyof TodoPayload) =>
         (event: ChangeEvent<HTMLInputElement>) => {
             const { value } = event.target;
             setValues((prev) => ({ ...prev, [field]: value }));
@@ -61,7 +65,7 @@ export default function EditTodoDialog({
 
     return (
         <Dialog open={open} onClose={loading ? undefined : onCancel} fullWidth>
-            <DialogTitle>TODOを編集</DialogTitle>
+            <DialogTitle>{dialogTitle}</DialogTitle>
             <DialogContent>
                 <Stack spacing={2} sx={{ mt: 1 }}>
                     <TextField
@@ -84,8 +88,10 @@ export default function EditTodoDialog({
                         value={values.todoDate}
                         onChange={handleChange("todoDate")}
                         disabled={loading}
-                        InputLabelProps={{
-                            shrink: true,
+                        slotProps={{
+                            inputLabel: {
+                                shrink: true,
+                            },
                         }}
                         required
                     />
@@ -100,7 +106,7 @@ export default function EditTodoDialog({
                     disabled={loading || !canSubmit}
                     variant="contained"
                 >
-                    保存する
+                    {submitLabel}
                 </Button>
             </DialogActions>
         </Dialog>
