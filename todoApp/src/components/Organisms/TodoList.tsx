@@ -11,10 +11,15 @@ type Props = {
 
 export default function TodoList({ todos, onDelete }: Props) {
     const [targetTodo, setTargetTodo] = useState<TodoType | null>(null);
+    const [updateTodo, setUpdateTodo] = useState<TodoType | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
 
     const handleRequestDelete = (todo: TodoType) => {
         setTargetTodo(todo);
+    };
+
+    const handleRequestUpdate = (todo: TodoType) => {
+        setUpdateTodo(todo);
     };
 
     const handleClose = () => {
@@ -42,6 +47,24 @@ export default function TodoList({ todos, onDelete }: Props) {
         }
     };
 
+    const handleConfirmEdit = async () => {
+        if (!targetTodo) {
+            return;
+        }
+        setIsDeleting(true);
+        try {
+            await onDelete(updateTodo.id);
+            setTargetTodo(null);
+        } catch (err) {
+            console.error(
+                `Failed to delete todo with id ${targetTodo.id}`,
+                err
+            );
+        } finally {
+            setIsDeleting(false);
+        }
+    };
+
     return (
         <>
             <Box sx={{ display: "flex", flexDirection: "column", gap: 0 }}>
@@ -53,6 +76,9 @@ export default function TodoList({ todos, onDelete }: Props) {
                         author={todo.author}
                         onDelete={() => {
                             handleRequestDelete(todo);
+                        }}
+                        onUpdate={() => {
+                            handleRequestUpdate(todo);
                         }}
                     />
                 ))}

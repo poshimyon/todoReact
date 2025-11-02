@@ -30,20 +30,30 @@ export default function useTodos(): UseTodosResult {
         }
     }, []);
 
-    const remove = useCallback(
-        async (id: string) => {
-            setError(null);
-            try {
-                await deleteTodoApi(id);
-                setData((prev) => prev.filter((todo) => todo.id !== id));
-            } catch (err: unknown) {
-                const error = err instanceof Error ? err : new Error(String(err));
-                setError(error);
-                throw error;
-            }
-        },
-        []
-    );
+    const remove = useCallback(async (id: string) => {
+        setError(null);
+        try {
+            await deleteTodoApi(id);
+            setData((prev) => prev.filter((todo) => todo.id !== id));
+        } catch (err: unknown) {
+            const error = err instanceof Error ? err : new Error(String(err));
+            setError(error);
+            throw error;
+        }
+    }, []);
+
+    const edit = useCallback(async (id: string, title: string) => {
+        setError(null);
+        try {
+            // TODO：ここの編集APIを呼び出す処理を追加
+            await editTodoApi(id, title);
+            // TODO：ここに値を更新する処理を追加
+        } catch (err: unknown) {
+            const error = err instanceof Error ? err : new Error(String(err));
+            setError(error);
+            throw error;
+        }
+    }, []);
 
     useEffect(() => {
         void fetch();

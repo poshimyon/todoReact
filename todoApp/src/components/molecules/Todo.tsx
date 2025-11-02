@@ -1,15 +1,23 @@
 // components/Todo.tsx
 import { Box, Typography, Paper } from "@mui/material";
 import DeleteButton from "../atoms/DeleteButton";
+import UpdateButton from "../atoms/UpdateButton";
 
 type TodoProps = {
     todoDate: string;
     title: string;
     author: string;
     onDelete: () => void;
+    onUpdate: () => void;
 };
 
-export default function Todo({ todoDate, title, author, onDelete }: TodoProps) {
+export default function Todo({
+    todoDate,
+    title,
+    author,
+    onDelete,
+    onUpdate,
+}: TodoProps) {
     return (
         <Paper
             elevation={3}
@@ -29,6 +37,9 @@ export default function Todo({ todoDate, title, author, onDelete }: TodoProps) {
                     alignItems: "center",
                 }}
             >
+                <Box sx={{ width: "10%", textAlign: "right" }}>
+                    <UpdateButton onClick={onUpdate} />
+                </Box>
                 <Box sx={{ width: "10%", textAlign: "right" }}>
                     <DeleteButton onClick={onDelete} />
                 </Box>
