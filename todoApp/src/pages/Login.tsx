@@ -1,5 +1,5 @@
 import { Box } from "@mui/material";
-import LoginForm from "../components/LoginForm";
+import LoginForm from "../components/Organisms/LoginForm";
 
 export default function Login() {
     return (
