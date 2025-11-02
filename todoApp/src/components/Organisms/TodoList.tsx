@@ -1,45 +1,44 @@
 import { useState } from "react";
-import Todo from "../molecules/Todo";
 import { Box } from "@mui/material";
-import type { TodoType } from "../../types/todo";
+import Todo from "../molecules/Todo";
 import ConfirmDialog from "../molecules/ConfirmDialog";
+import EditTodoDialog from "../molecules/EditTodoDialog";
+import type { TodoType, TodoUpdatePayload } from "../../types/todo";
 
 type Props = {
     todos: TodoType[];
     onDelete: (id: string) => Promise<void>;
+    onEdit: (id: string, payload: TodoUpdatePayload) => Promise<void>;
 };
 
-export default function TodoList({ todos, onDelete }: Props) {
-    const [targetTodo, setTargetTodo] = useState<TodoType | null>(null);
-    const [updateTodo, setUpdateTodo] = useState<TodoType | null>(null);
+export default function TodoList({ todos, onDelete, onEdit }: Props) {
+    const [deletingTodo, setDeletingTodo] = useState<TodoType | null>(null);
+    const [editingTodo, setEditingTodo] = useState<TodoType | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
 
     const handleRequestDelete = (todo: TodoType) => {
-        setTargetTodo(todo);
+        setDeletingTodo(todo);
     };
 
-    const handleRequestUpdate = (todo: TodoType) => {
-        setUpdateTodo(todo);
-    };
-
-    const handleClose = () => {
+    const handleDeleteCancel = () => {
         if (isDeleting) {
             return;
         }
-        setTargetTodo(null);
+        setDeletingTodo(null);
     };
 
-    const handleConfirmDelete = async () => {
-        if (!targetTodo) {
+    const handleDeleteConfirm = async () => {
+        if (!deletingTodo) {
             return;
         }
         setIsDeleting(true);
         try {
-            await onDelete(targetTodo.id);
-            setTargetTodo(null);
+            await onDelete(deletingTodo.id);
+            setDeletingTodo(null);
         } catch (err) {
             console.error(
-                `Failed to delete todo with id ${targetTodo.id}`,
+                `Failed to delete todo with id ${deletingTodo.id}`,
                 err
             );
         } finally {
@@ -47,21 +46,32 @@ export default function TodoList({ todos, onDelete }: Props) {
         }
     };
 
-    const handleConfirmEdit = async () => {
-        if (!targetTodo) {
+    const handleRequestEdit = (todo: TodoType) => {
+        setEditingTodo(todo);
+    };
+
+    const handleEditCancel = () => {
+        if (isSaving) {
             return;
         }
-        setIsDeleting(true);
+        setEditingTodo(null);
+    };
+
+    const handleEditSave = async (values: TodoUpdatePayload) => {
+        if (!editingTodo) {
+            return;
+        }
+        setIsSaving(true);
         try {
-            await onDelete(updateTodo.id);
-            setTargetTodo(null);
+            await onEdit(editingTodo.id, values);
+            setEditingTodo(null);
         } catch (err) {
             console.error(
-                `Failed to delete todo with id ${targetTodo.id}`,
+                `Failed to update todo with id ${editingTodo.id}`,
                 err
             );
         } finally {
-            setIsDeleting(false);
+            setIsSaving(false);
         }
     };
 
@@ -78,25 +88,43 @@ export default function TodoList({ todos, onDelete }: Props) {
                             handleRequestDelete(todo);
                         }}
                         onUpdate={() => {
-                            handleRequestUpdate(todo);
+                            handleRequestEdit(todo);
                         }}
                     />
                 ))}
             </Box>
 
             <ConfirmDialog
-                open={Boolean(targetTodo)}
+                open={Boolean(deletingTodo)}
                 title="TODOを削除しますか？"
                 description={
-                    targetTodo
-                        ? `「${targetTodo.title}」を削除すると元に戻せません。`
+                    deletingTodo
+                        ? `「${deletingTodo.title}」を削除すると元に戻せません。`
                         : ""
                 }
                 confirmLabel="削除する"
                 loading={isDeleting}
-                onCancel={handleClose}
+                onCancel={handleDeleteCancel}
                 onConfirm={() => {
-                    void handleConfirmDelete();
+                    void handleDeleteConfirm();
+                }}
+            />
+
+            <EditTodoDialog
+                open={Boolean(editingTodo)}
+                initialValues={
+                    editingTodo
+                        ? {
+                              title: editingTodo.title,
+                              author: editingTodo.author,
+                              todoDate: editingTodo.todoDate,
+                          }
+                        : null
+                }
+                loading={isSaving}
+                onCancel={handleEditCancel}
+                onSave={(values) => {
+                    void handleEditSave(values);
                 }}
             />
         </>

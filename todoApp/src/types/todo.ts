@@ -4,3 +4,9 @@ export type TodoType = {
     author: string;
     todoDate: string;
 };
+
+export type TodoUpdatePayload = {
+    title: string;
+    author: string;
+    todoDate: string;
+};

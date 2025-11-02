@@ -1,6 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
-import { deleteTodo as deleteTodoApi, getTodos } from "../api/todos";
-import type { TodoType } from "../types/todo";
+import {
+    deleteTodo as deleteTodoApi,
+    getTodos,
+    updateTodo as updateTodoApi,
+} from "../api/todos";
+import type { TodoType, TodoUpdatePayload } from "../types/todo";
 
 type UseTodosResult = {
     data: TodoType[];
@@ -8,6 +12,7 @@ type UseTodosResult = {
     error: Error | null;
     refetch: () => Promise<void>;
     remove: (id: string) => Promise<void>;
+    edit: (id: string, payload: TodoUpdatePayload) => Promise<void>;
 };
 
 export default function useTodos(): UseTodosResult {
@@ -42,22 +47,26 @@ export default function useTodos(): UseTodosResult {
         }
     }, []);
 
-    const edit = useCallback(async (id: string, title: string) => {
-        setError(null);
-        try {
-            // TODO：ここの編集APIを呼び出す処理を追加
-            await editTodoApi(id, title);
-            // TODO：ここに値を更新する処理を追加
-        } catch (err: unknown) {
-            const error = err instanceof Error ? err : new Error(String(err));
-            setError(error);
-            throw error;
-        }
-    }, []);
+    const edit = useCallback(
+        async (id: string, payload: TodoUpdatePayload) => {
+            setError(null);
+            try {
+                const updated = await updateTodoApi(id, payload);
+                setData((prev) =>
+                    prev.map((todo) => (todo.id === id ? updated : todo))
+                );
+            } catch (err: unknown) {
+                const error = err instanceof Error ? err : new Error(String(err));
+                setError(error);
+                throw error;
+            }
+        },
+        []
+    );
 
     useEffect(() => {
         void fetch();
     }, [fetch]);
 
-    return { data, loading, error, refetch: fetch, remove };
+    return { data, loading, error, refetch: fetch, remove, edit };
 }
